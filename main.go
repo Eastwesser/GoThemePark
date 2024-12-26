@@ -2,8 +2,11 @@ package GoThemePark
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"os"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -22,19 +25,19 @@ func main() {
 	fmt.Println("Добро пожаловать в", ParkName)
 	fmt.Printf("Часы работы: %v - %v\n", OpenTime.Format("15:04"), CloseTime.Format("15:04"))
 
-	// 1. Работа с примитивами
+	// Работа с примитивами
 	visitorCount := 500
 	fmt.Println("Текущие посетители:", visitorCount)
 
-	// 2. Работа с числами
+	// Работа с числами
 	totalRevenue := calculateRevenue(visitorCount, TicketPrice)
 	fmt.Printf("Общая выручка: %.2f$\n", totalRevenue)
 
-	// 3. Работа с массивами и слайсами
+	// Работа с массивами и слайсами
 	attractions := []string{"Колесо обозрения", "Американские горки", "Комната страха", "Автодром"}
 	printAttractions(attractions)
 
-	// 4. Работа с картами
+	// Работа с картами
 	visitorAgeGroups := map[string]int{
 		"Дети":       200,
 		"Взрослые":   250,
@@ -42,22 +45,37 @@ func main() {
 	}
 	printVisitorStats(visitorAgeGroups)
 
-	// 5. Указатели
+	// Работа с указателями
 	highlightAttraction := "Американские горки"
 	promoteAttraction(&highlightAttraction)
 
-	// 6. Анонимные функции
+	// Работа с strconv
+	visitorCountStr := strconv.Itoa(visitorCount)
+	fmt.Println("Посетителей в строковом формате:", visitorCountStr)
+
+	// Работа с strings
+	parkDescription := strings.Join(attractions, ", ")
+	fmt.Println("Описание парка:", parkDescription)
+
+	// Работа с errors
+	err := checkCapacity(visitorCount + 600)
+	if err != nil {
+		fmt.Println("Ошибка:", err)
+	}
+
+	// Анонимная функция
 	func(message string) {
 		fmt.Println("Специальное объявление:", message)
 	}("Скидки на билеты после 18:00!")
 
-	// 7. Обработчики ошибок
+	// Обработчики ошибок
 	handleErrors(0, 0)
 
-	// 8. Работа с библиотеками
+	// Работа с библиотекой os
 	logToFile("park.log", "Парк успешно открылся!")
 
-	fmt.Println("\n*** Тестирование завершено! ***")
+	fmt.Println("\n*** Парк завершил работу! ***")
+	os.Exit(0)
 }
 
 // Расчёт выручки
@@ -85,6 +103,14 @@ func printVisitorStats(stats map[string]int) {
 func promoteAttraction(attraction *string) {
 	*attraction = *attraction + " - САМЫЙ ПОПУЛЯРНЫЙ!"
 	fmt.Println("Промоция:", *attraction)
+}
+
+// Проверка вместимости
+func checkCapacity(currentVisitors int) error {
+	if currentVisitors > MaxVisitors {
+		return errors.New("превышена максимальная вместимость парка")
+	}
+	return nil
 }
 
 // Обработчики ошибок
